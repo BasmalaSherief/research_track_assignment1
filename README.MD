@@ -1,73 +1,99 @@
 # Research Track I - Assignment 1
+  
 
 ## Description
 This package (`assignment1_rt`) implements a control system for the Turtlesim simulation using ROS 2 (C++). It satisfies the requirements for Assignment 1 of the Research Track I course.
 
-The project consists of two main nodes:
-1.  **UI Node:** A controller that allows the user to spawn commands to a specific turtle. It handles linear and angular velocity and implements a 1-second movement timer.
-2.  **Distance Monitor Node:** A safety node that monitors the position of both turtles. It calculates the Euclidean distance and stops the robots if they get too close or if they approach the environment boundaries.
+The project consists of three main components:
+
+1. **UI Node**  
+   A C++ controller that allows the user to send velocity commands (Linear X, Angular Z) to a specific turtle. It includes a 1-second movement timer for safe control.
+
+2. **Distance Monitor Node**  
+   A C++ safety node that monitors the position of two turtles. It computes the Euclidean distance between them and checks boundary limits. If turtles get too close or approach the environment edges, the node stops movement or enables safe reverse behavior.
+
+3. **Automatic Setup Script**  
+   A Bash script that launches the simulation, spawns the second turtle and starts the distance safety node.
+
+---
 
 ## Installation and Build
-To run this package, you must first build it in your ROS 2 workspace.
+
+Build the package inside your ROS 2 workspace:
 
 ```bash
 cd ~/ros2_ws
 colcon build --packages-select assignment1_rt
 source install/setup.bash
+```
 
-How to Run
+---
 
-You can run the assignment using the provided shell script (easier) or manually via separate terminals.
-Option 1: Using the Shell Script (Recommended)
+## How to Run
 
-A run_assignment.sh script is provided to automate the startup process. It launches the simulation, spawns the second turtle, starts the distance monitor but you run the user interface from another terminal
+### **Option 1: Using the Shell Script**
 
-    Make the script executable:
-    Bash
+A `run_assignment.sh` script is provided to automate the startup process.
 
+**Make the script executable** (only required once):
+
+```bash
 chmod +x run_assignment.sh
+```
 
-Run the script:
-Bash
+**Run the script:**
 
-    ./run_assignment.sh
+```bash
+./run_assignment.sh
+```
 
-Option 2: Manual Execution
+This will:
+- Start the Turtlesim simulation  
+- Spawn the second turtle  
+- Launch the distance monitor node  
 
-If you prefer to run the nodes individually, open four separate terminals and run the following commands:
+But:
+- you have to launch a new terminal window for the UI controller manually (Till I find a solution)
 
-Terminal 1: Start Simulation
-Bash
+---
 
+### **Option 2: Manual Execution**
+
+Run the following commands in **separate terminals**:
+
+#### **1. Start Simulation**
+```bash
 ros2 run turtlesim turtlesim_node
+```
 
-Terminal 2: Spawn Second Turtle We run the script directly from the source folder:
-Bash
-
+#### **2. Spawn Second Turtle**
+```bash
 source install/setup.bash
 python3 src/assignment1_rt/src/turtle_spawn.py
+```
 
-Terminal 3: Run Distance Monitor
-Bash
-
+#### **3. Run Distance Monitor**
+```bash
 source install/setup.bash
-ros2 run assignment1_rt distance_node
+ros2 run assignment1_rt DistanceControl
+```
 
-Terminal 4: Run UI Controller
-Bash
-
+#### **4. Run UI Controller**
+```bash
 source install/setup.bash
 ros2 run assignment1_rt UI
+```
 
-Project Structure
+---
 
-    src/UI.cpp: C++ node that handles user input (std::cin) and publishes cmd_vel commands. It includes logic to stop the robot automatically after 1 second.
+## Files Description
 
-    src/distance_node.cpp: C++ node that subscribes to /turtle1/pose and /turtle2/pose. It publishes the relative distance and sends stop commands if boundaries are breached or collision is imminent.
+| File | Description |
+|------|-------------|
+| `src/UI.cpp` | C++ node that handles user input and publishes `cmd_vel` velocity commands. It includes a 1-second automatic stop timer. |
+| `src/distance_node.cpp` | C++ safety node that subscribes to turtle poses, computes the distance between turtles, monitors boundaries, and performs smart braking. |
+| `src/turtle_spawn.py` | Python script that uses the `/spawn` service to create a second turtle in the simulation. |
+| `run_assignment.sh` | Bash script that automates launching the entire assignment pipeline. |
 
-    src/turtle_spawn.py: Python script that uses the /spawn service to add turtle2 to the environment.
-
-    run_assignment.sh: Bash script to automate the launch of all nodes and the UI terminal.
-
-    launch/simulation.launch.py: (Optional) ROS 2 Launch file configuration.
+---
 

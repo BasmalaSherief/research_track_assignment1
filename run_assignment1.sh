@@ -16,7 +16,7 @@ python3 /home/basmala/ros2_ws/assignment1_rt/src/turtle_spawn.py
 
 # Distance Monitor
 echo "Starting Distance Monitor..."
-ros2 run assignment1_rt distance_node &
+ros2 run assignment1_rt DistanceControl &
 DISTANCE_PID=$!
 
 # Wait loop 
